@@ -1,0 +1,23 @@
+@import "flowbite/src/themes/default";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Super Admin - View List Student Table */
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.registered-users-table {
+  min-width: 650px;
+}
+
+@media (max-width: 768px) {
+  .registered-users-table {
+    min-width: 100%;
+  }
+  .registered-users-table th,
+  .registered-users-table td {
+    white-space: nowrap;
+  }
+}
