@@ -44,6 +44,8 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::get('/admin/club', [SuperAdminController::class, 'showClub'])->name('super_admin.showClubs');
     Route::get('/club/deletion-requests', [SuperAdminController::class, 'showClubDeletionRequests'])->name('super_admin.showClubDeletionRequests');
     Route::get('/club/registered', [SuperAdminController::class, 'showRegisteredClubs'])->name('super_admin.showRegisteredClubs');
+    Route::get('/club/registration-requests', [SuperAdminController::class, 'showClubRegistrationClubs'])->name('super_admin.showClubRegistrationRequests');
+    Route::get('/club/pending-announcement', [SuperAdminController::class, 'showPendingAnnouncement'])->name('super_admin.showPendingAnnouncement');
 });
 
 

@@ -31,4 +31,14 @@ class SuperAdminController extends Controller
     {
         return view('admin.club.registered.registeredClubs');
     }
+
+    public function showClubRegistrationClubs()
+    {
+        return view('admin.club.registration.registrationClubs');
+    }
+
+    public function showPendingAnnouncement()
+    {
+        return view('admin.club.announcement.showAnnouncement');
+    }
 }
