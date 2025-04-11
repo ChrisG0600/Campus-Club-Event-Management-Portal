@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClubAnnouncementController;
 use App\Http\Controllers\ClubApplicationController;
 use App\Http\Controllers\ClubController;
@@ -40,12 +41,18 @@ Route::middleware(['auth', 'role:club_admin'])->group(function () {
 // Only Super Admins can access admin stuff
 Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::get('/', [SuperAdminController::class, 'index'])->name('super_admin.dashboard');
-    Route::get('/admin/students', [SuperAdminController::class, 'showStudents'])->name('super_admin.showStudents');
-    Route::get('/admin/club', [SuperAdminController::class, 'showClub'])->name('super_admin.showClubs');
+    Route::get('/students', [SuperAdminController::class, 'showStudents'])->name('super_admin.showStudents');
+    Route::get('/clubs', [SuperAdminController::class, 'showClub'])->name('super_admin.showClubs');
     Route::get('/club/deletion-requests', [SuperAdminController::class, 'showClubDeletionRequests'])->name('super_admin.showClubDeletionRequests');
     Route::get('/club/registered', [SuperAdminController::class, 'showRegisteredClubs'])->name('super_admin.showRegisteredClubs');
     Route::get('/club/registration-requests', [SuperAdminController::class, 'showClubRegistrationClubs'])->name('super_admin.showClubRegistrationRequests');
     Route::get('/club/pending-announcement', [SuperAdminController::class, 'showPendingAnnouncement'])->name('super_admin.showPendingAnnouncement');
+
+    // CRUD for categories
+    Route::get('/club/categories', [CategoryController::class, 'index'])->name('super_admin.categories.index');
+    Route::post('/club/categories', [CategoryController::class, 'store'])->name('super_admin.categories.store');
+    Route::put('/club/categories/{category}', [CategoryController::class, 'update'])->name('super_admin.categories.update');
+    Route::delete('/club/categories/{category}', [CategoryController::class, 'destroy'])->name('super_admin.categories.destroy');
 });
 
 
