@@ -41,7 +41,12 @@ Route::middleware(['auth', 'role:club_admin'])->group(function () {
 // Only Super Admins can access admin stuff
 Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::get('/', [SuperAdminController::class, 'index'])->name('super_admin.dashboard');
+
     Route::get('/students', [SuperAdminController::class, 'showStudents'])->name('super_admin.showStudents');
+    Route::get('/students/search', [SuperAdminController::class, 'searchStudents'])->name('super_admin.searchStudents');
+    Route::put('/students/{studentsId}', [SuperAdminController::class, 'updateStudent'])->name('super_admin.updateStudent');
+    Route::delete('/students/{studentsId}', [SuperAdminController::class, 'destroyStudent'])->name('super_admin.destroyStudent');
+
     Route::get('/clubs', [SuperAdminController::class, 'showClub'])->name('super_admin.showClubs');
     Route::get('/club/deletion-requests', [SuperAdminController::class, 'showClubDeletionRequests'])->name('super_admin.showClubDeletionRequests');
     Route::get('/club/registered', [SuperAdminController::class, 'showRegisteredClubs'])->name('super_admin.showRegisteredClubs');

@@ -47,6 +47,19 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        switch ($user->role) {
+            case 'student':
+                return redirect(route('student.dashboard')); // Assuming you have a 'student.dashboard' route
+                break;
+            case 'club_admin':
+                return redirect(route('club_admin.dashboard')); // Assuming you have a 'club_admin.dashboard' route
+                break;
+            case 'super_admin':
+                return redirect(route('super_admin.dashboard')); // Assuming you have a 'super_admin.dashboard' route
+                break;
+            default:
+                return redirect(route('/')); // Default dashboard if role doesn't match
+                break;
+        }
     }
 }
