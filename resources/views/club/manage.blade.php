@@ -33,7 +33,7 @@
           <h3 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Club Announcements') }}</h3>
 
           <div class="mb-4">
-            <a href="{{ route('create') }}"
+            <a href="{{ route('club_admin.announcement.create') }}"
               class="inline-flex items-center px-4 py-2 bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
               {{ __('Create New Announcement') }}
             </a>
@@ -42,53 +42,28 @@
           </div>
 
           <ul class="space-y-4">
-            <li class="border rounded-md p-4 hover:shadow-md transition duration-200">
-              <h5 class="font-semibold text-gray-700">{{ __('Upcoming Python Workshop') }}</h5>
-              <p class="text-gray-500 text-sm">{{ __('Status:') }} <span class="text-green-500">{{ __('Approved')
-                  }}</span></p>
-              <p class="text-gray-600 text-sm mt-1">{{ __('Join us for an introductory Python workshop on April 15th at
-                3 PM in IT Lab 201.') }}</p>
-              <div class="mt-2">
-                <a href="#"
-                  class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Edit') }}</a>
-                <button
-                  class="ml-2 inline-flex items-center px-3 py-1.5 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Delete') }}</button>
-              </div>
-            </li>
-
-            <li class="border rounded-md p-4 hover:shadow-md transition duration-200">
-              <h5 class="font-semibold text-gray-700">{{ __('Project Showcase Reminder') }}</h5>
-              <p class="text-gray-500 text-sm">{{ __('Status:') }} <span class="text-yellow-500">{{ __('Pending
-                  Approval') }}</span></p>
-              <p class="text-gray-600 text-sm mt-1">{{ __('A friendly reminder that the deadline for project submissions
-                for the semester showcase is this Friday.') }}</p>
-              <div class="mt-2">
-                <a href="#"
-                  class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Edit') }}</a>
-                <button
-                  class="ml-2 inline-flex items-center px-3 py-1.5 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Delete') }}</button>
-              </div>
-            </li>
-
-            <li class="border rounded-md p-4 hover:shadow-md transition duration-200">
-              <h5 class="font-semibold text-gray-700">{{ __('Meeting Next Week') }}</h5>
-              <p class="text-gray-500 text-sm">{{ __('Status:') }} <span class="text-green-500">{{ __('Approved')
-                  }}</span></p>
-              <p class="text-gray-600 text-sm mt-1">{{ __('Our next general meeting will be held on Wednesday next week
-                at 4 PM in the student lounge.') }}</p>
-              <div class="mt-2">
-                <a href="#"
-                  class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Edit') }}</a>
-                <button
-                  class="ml-2 inline-flex items-center px-3 py-1.5 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Delete') }}</button>
-              </div>
-            </li>
+            @forelse ( $announcements as $announcement)
+              <li class="border rounded-md p-4 hover:shadow-md transition duration-200">
+                <h5 class="font-semibold text-gray-700">{{ $announcement->title }}</h5>
+                <p class="text-gray-500 text-sm">{{ __('Status:') }} <span class="text-green-500">{{ __('Approved') }}</span></p>
+                <p class="text-gray-600 text-sm mt-1">{{ $announcement->content }}</p>
+                <div class="mt-2">
+                  <a href="{{ route('club_admin.announcement.edit', $announcement->id) }}"
+                    class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
+                    __('Edit') }}
+                  </a>
+                  <form method="POST" action="{{ route('club_admin.announcement.destroy', ['id' => $announcement->id]) }}"  data-redirect-url="{{ route('club_admin.manage') }}" class="inline" >
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" data-name="{{ $announcement->title }}" class="delete-btn ml-2 inline-flex items-center px-3 py-1.5 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">{{
+                      __('Delete') }}
+                    </button>
+                  </form>
+                </div>
+              </li>
+            @empty
+              <h5>No Announcment</h5>
+            @endforelse
           </ul>
         </div>
       </div>

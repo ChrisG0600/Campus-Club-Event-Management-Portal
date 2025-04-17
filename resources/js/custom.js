@@ -508,9 +508,109 @@ $(document).ready(function(){
   })
 });
 
+// Add Functionality for Create Announcement
+$(document).ready(function(){
+  $('#add-announcement-form').submit(function(event){
+    event.preventDefault();
+    $(".error-message").remove();
+    const form = $(this); // Get the form element
+    const url = form.attr('action'); // Get the form action URL
+    const type = 'POST'; // Get the form method
+    const data = form.serialize(); // Serialize the form data
 
+    $.ajax({
+      url: url,
+      type: type,
+      data: data,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success:function(response){
+        if(response.success){
+          swal.fire({
+            title: "Success!",
+            text: response.message,
+            icon: "success",
+          }).then(function () {
+            window.location.reload();
+          })
+        }else{
+          swal.fire({
+            title: "Error!",
+            text: response.message || "An unexpected error occurred.",
+            icon: "error",
+          })
+        }
+      },
+      error: function (xhr) {
+        if (xhr.responseJSON?.errors) {
+          $.each(xhr.responseJSON.errors, function (field, messages) {
+            let inputField = $("input[name='" + field + "'], textarea[name='" + field + "']");
+            if (!inputField.next(".error-message").length) {
+              inputField.after(
+                `<span class="text-red-500 error-message">${messages[0]}</span>`
+              );
+            }
+          });
+        }else {
+          errorAlert();
+        }
+      },
+    })
+  })
+});
 
+// Edit Functionality for Update Announcement
+$(document).ready(function(){
+  $('#edit-announcement-form').submit(function(event){
+    event.preventDefault();
+    $(".error-message").remove();
+    const form = $(this); // Get the form element
+    const url = form.attr('action'); // Get the form action URL
+    const type = 'POST'; // Get the form method
+    const data = form.serialize(); // Serialize the form data
 
+    $.ajax({
+      url: url,
+      type: type,
+      data: data,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success:function(response){
+        if(response.success){
+          swal.fire({
+            title: "Awesome!",
+            text: response.message,
+            icon: "success",
+          }).then(function () {
+            window.location.reload();
+          })
+        }else{
+          swal.fire({
+            title: "Error!",
+            text: response.message || "An unexpected error occurred.",
+            icon: "error",
+          })
+        }
+      },
+      error: function (xhr) {
+        if (xhr.responseJSON?.errors) {
+          $.each(xhr.responseJSON.errors, function (field, messages) {
+            let inputField = $("input[name='" + field + "'], textarea[name='" + field + "'], select[name='" + field + "']");
+            if (!inputField.next(".error-message").length) {
+              inputField.after(
+                `<span class="text-red-500 error-message">${messages[0]}</span>`
+              );
+            }
+          });
+        }else {
+          errorAlert();
+        }
+      },
+    })
+  })
+});
 
 
 

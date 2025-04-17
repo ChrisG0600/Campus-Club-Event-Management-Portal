@@ -4,20 +4,21 @@
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-8 bg-white border-b border-gray-200">
           <h2 class="font-semibold text-xl text-gray-800 mb-6">{{ __('Create Announcement') }}</h2>
-          <form class="space-y-6" id="add-announcement-form" method="POST" action="{{ route('club_admin.announcement.store') }}">
+          <form class="space-y-6" id="edit-announcement-form" method="POST" action="{{ route('club_admin.announcement.update', $announcements->id) }}">
             @csrf
+            @method('PUT')
             <div>
+              <input type="hidden" id=announcement_id name="announcement_id" value="{{ $announcements->id}}">
               <label for="title" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Title') }}</label>
               <input type="text" id="title" name="title"
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="{{ __('Enter Title') }}" required>
+                placeholder="{{ __('Enter Title') }}" value="{{ $announcements->title }}">
             </div>
-
             <div>
               <label for="content" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Content') }}</label>
               <textarea id="content" name="content" rows="4"
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="{{ __('Enter Announcement Content') }}" required></textarea>
+                placeholder="{{ __('Enter Announcement Content') }}">{{ $announcements->content}}</textarea>
             </div>
 
             <div>
@@ -25,19 +26,19 @@
                 Date') }}</label>
               <input type="text" id="announcement_date" name="announcement_date"
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="{{ __('Select Announcement Date') }}" required>
+                placeholder="{{ __('Select Announcement Date') }}" value="{{ $announcements->formatted_announcement_date}}">
             </div>
 
             <div>
               <label for="time" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Time (Optional)') }}</label>
-              <input type="time" id="time" name="time"
+              <input type="time" id="time" name="time" value="{{ old('time', $announcements->time) }}"
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
               <p class="text-gray-500 text-xs mt-1">{{ __('If applicable.') }}</p>
             </div>
 
             <div>
               <label for="place" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Place (Optional)') }}</label>
-              <input type="text" id="place" name="place"
+              <input type="text" id="place" name="place" value="{{ $announcements->place}}"
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="{{ __('Enter Location') }}">
               <p class="text-gray-500 text-xs mt-1">{{ __('If applicable.') }}</p>

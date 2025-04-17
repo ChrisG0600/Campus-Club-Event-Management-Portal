@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ClubAnnouncement;
 use App\Models\ClubRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,7 @@ class ClubController extends Controller
         return view('club.form', compact('categories'));
     }
 
+    // Store Club Registration
     public function store(Request $request)
     {
         try{
@@ -74,7 +76,8 @@ class ClubController extends Controller
     public function manageClub()
     {
         $clubs = ClubRegistration::with('creator')->get();
-        return view('club.manage', compact('clubs'));
+        $announcements = ClubAnnouncement::with('creator')->get();
+        return view('club.manage', compact('clubs', 'announcements'));
     }
 
     // Edit Club
@@ -92,7 +95,7 @@ class ClubController extends Controller
     // Update Club
     public function update(Request $request, $id)
     {
-        Log::info('Request All: ' . print_r($request->all(), true));
+        //Log::info('Request All: ' . print_r($request->all(), true));
         try {
             $validator = Validator::make($request->all(),[
                 'id' => 'required',

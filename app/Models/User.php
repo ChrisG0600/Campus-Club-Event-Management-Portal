@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ClubRegistration::class, 'created_by');
     }
+
+    public function createdAnnouncements(): HasMany
+    {
+        return $this->hasMany(ClubAnnouncement::class, 'created_by');
+    }
 }

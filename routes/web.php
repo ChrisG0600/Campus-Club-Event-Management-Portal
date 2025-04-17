@@ -35,7 +35,14 @@ Route::middleware(['auth', 'role:club_admin'])->group(function () {
     Route::get('/club/edit/{id}', [ClubController::class, 'edit'])->name('club_admin.edit');
     Route::put('/club/update/{id}', [ClubController::class, 'update'])->name('club_admin.update');
     
-    Route::get('/club/manage/announcement/create', [ClubAnnouncementController::class, 'create'])->name('create');
+    Route::get('/club/manage/announcement/create', [ClubAnnouncementController::class, 'create'])->name('club_admin.announcement.create');
+    Route::post('/club/manage/announcement/create', [ClubAnnouncementController::class, 'store'])->name('club_admin.announcement.store');
+    Route::get('/club/manage/announcement/edit/{id}', [ClubAnnouncementController::class, 'edit'])->name('club_admin.announcement.edit');
+    Route::put('/club/manage/announcement/update/{id}', [ClubAnnouncementController::class, 'update'])->name('club_admin.announcement.update');
+    Route::delete('/club/manage/announcement/delete/{id}', [ClubAnnouncementController::class, 'destroy'])->name('club_admin.announcement.destroy');
+
+
+
     Route::get('/club/applicants', [ClubApplicationController::class, 'showApplicant'])->name('club_admin.showApplicant');
     // Change to {id} 
     Route::get('/club/applicants/1', [ClubApplicationController::class, 'show'])->name('club_admin.show');
