@@ -6,13 +6,13 @@
           <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Manage Students') }}
           </h2>
-          <a href="{{ route('super_admin.showClubs') }}"
+          <a href="{{ route('super_admin.dashboard') }}"
             class="inline-flex items-center rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <svg class="-ml-1 me-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
               aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
-            {{ __('Back to Club Management') }}
+            {{ __('Back to Admin Dashboard') }}
           </a>
         </div>
       </div>
@@ -45,7 +45,15 @@
                   <td class="py-3 px-4">{{ $userData->id }}</td>
                   <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">{{ $userData->name}}</th>
                   <td class="py-3 px-4 text-gray-500">{{ $userData->email }}</td>
-                  <td class="py-3 px-4 text-gray-500">{{ $userData->role }}</td>
+                  <td class="py-3 px-4 text-gray-500"> 
+                    @if ( $userData->role === 'student')
+                      {{ __('Student') }}
+                    @elseif( $userData->role === 'club_admin')
+                      {{ __('Club Admin') }}
+                    @else
+                      {{$userData->role}}
+                    @endif
+                  </td>
                   <td class="py-3 px-4 text-gray-500">{{ $userData->created_at->format('m/d/y')}}</td>
                   <td class="py-3 px-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2 items-center">
                     <button data-modal-target="edit-students-modal" data-modal-toggle="edit-students-modal"
@@ -55,12 +63,11 @@
                       data-students-role="{{ $userData->role }}"
                       class="font-medium text-blue-600 hover:underline cursor-pointer">{{ __('Edit') }}</button>
                     <span class="text-gray-300 mx-2">|</span>
-                    <form action="{{ route('super_admin.destroyStudent', ['studentsId' => $userData]) }}" method="POST"
-                      onsubmit="return confirm('{{ __('Are you sure you want to delete this category?') }}');">
+                    <form action="{{ route('super_admin.destroyStudent', ['studentsId' => $userData]) }}" method="POST">
                       @csrf
                       @method('DELETE')
 
-                      <button type="submit" class="btn text-red-600">{{ __('Delete') }}</button>
+                      <button type="submit" class="btn delete-btn text-red-600">{{ __('Delete') }}</button>
                     </form>
                   </td>
                 </tr>

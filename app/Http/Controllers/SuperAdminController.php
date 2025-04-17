@@ -60,20 +60,43 @@ class SuperAdminController extends Controller
     {
         $query = $request->input('query');
 
+        $users = User::query()
+            ->where('role', '!=', 'super_admin'); // Exclude super admins
+
         if ($query) {
-            $users = User::where('name', 'like', '%' . $query . '%')
-                        ->orWhere('email', 'like', '%' . $query . '%')
-                        ->orWhere('role', 'like', '%' . $query . '%')
-                        ->get();
-
-            return response()->json($users);
+            $users->where(function ($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%')
+                ->orWhere('email', 'like', '%' . $query . '%')
+                ->orWhere('role', 'like', '%' . $query . '%');
+            });
         } else {
-            // Return all users (adjust query as needed for your base data)
-            $users = User::where('role', 'student')->orWhere('role', 'club_admin')->get();
-            return response()->json($users);
+            $users->whereIn('role', ['student', 'club_admin']);
         }
-    }
 
+        $users = $users->get();
+
+        $formattedUsers = $users->map(function ($user) {
+            $formattedRole = '';
+            if ($user->role === 'student') {
+                $formattedRole = __('Student');
+            } elseif ($user->role === 'club_admin') {
+                $formattedRole = __('Club Admin');
+            } else {
+                $formattedRole = $user->role;
+            }
+
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'formatted_role' => $formattedRole,
+                'created_at' => $user->created_at
+            ];
+        });
+
+        return response()->json($formattedUsers);
+    }
     public function showClub()
     {
         return view('admin.club.show');

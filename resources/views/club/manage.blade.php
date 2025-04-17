@@ -2,55 +2,35 @@
   <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-6">
-        {{ __('Club Admin Dashboard') }}
+        {{ __('Manage your Club and Announcement') }}
       </h2>
 
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 bg-white border-b border-gray-200">
           <h3 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Manage Your Clubs') }}</h3>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          @forelse ( $clubs as $club)
             <div class="border rounded-md p-4 hover:shadow-md transition duration-200">
-              <h4 class="font-semibold text-indigo-700">{{ __('Computer Science Society') }}</h4>
-              <p class="text-gray-600 text-sm mb-2">{{ __('Admin since:') }} {{ __('Jan 15, 2025') }}</p>
+              <h4 class="font-semibold text-indigo-700">{{ __('Club Name: ')}}{{ $club->club_name}}</h4>
+              <p class="text-gray-600 text-sm mb-2">{{ __('Club President:') }} {{ $club->creator->name}}</p>
               <div class="mt-2">
-                <a href="#"
-                  class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
+                <a href="{{ route('club_admin.edit', $club->id) }}"
+                class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
                   __('Edit Club') }}</a>
-                <button
+                  <button
                   class="ml-2 inline-flex items-center px-3 py-1.5 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:outline-none focus:ring focus:ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Request Deletion') }}</button>
-              </div>
+                    __('Request Deletion') }}</button>
+                </div>
             </div>
-
-            <div class="border rounded-md p-4 hover:shadow-md transition duration-200">
-              <h4 class="font-semibold text-green-700">{{ __('Robotics Club') }}</h4>
-              <p class="text-gray-600 text-sm mb-2">{{ __('Admin since:') }} {{ __('Feb 20, 2025') }}</p>
-              <div class="mt-2">
-                <a href="#"
-                  class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Edit Club') }}</a>
-                <button
-                  class="ml-2 inline-flex items-center px-3 py-1.5 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:outline-none focus:ring focus:ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Request Deletion') }}</button>
+            @empty
+              <div class="col-span-1 md:col-span-2 text-center py-8">
+                <p class="text-gray-500 text-sm">{{ __('No clubs available.') }}</p>
               </div>
-            </div>
-
-            <div class="border rounded-md p-4 hover:shadow-md transition duration-200">
-              <h4 class="font-semibold text-purple-700">{{ __('Literary Society') }}</h4>
-              <p class="text-gray-600 text-sm mb-2">{{ __('Admin since:') }} {{ __('Mar 01, 2025') }}</p>
-              <div class="mt-2">
-                <a href="#"
-                  class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Edit Club') }}</a>
-                <button
-                  class="ml-2 inline-flex items-center px-3 py-1.5 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:outline-none focus:ring focus:ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                  __('Request Deletion') }}</button>
-              </div>
-            </div>
+            @endforelse
           </div>
 
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Manage Club Announcements') }}</h3>
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Club Announcements') }}</h3>
 
           <div class="mb-4">
             <a href="{{ route('create') }}"

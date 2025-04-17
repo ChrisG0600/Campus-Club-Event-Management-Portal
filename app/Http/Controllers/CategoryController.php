@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
 class CategoryController extends Controller
 {
     //
@@ -30,17 +29,16 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the request
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
+            'title' => ['required', 'string', 'max:50', 'unique:categories,title', 'regex:/^[a-zA-Z ]+$/'],
+            'description' => ['nullable', 'string', 'max:300', 'regex:/^[a-zA-Z ]+$/'],
         ]);
 
         // Create a new category
         $category = Category::create($validatedData);
 
         return response()->json([
-            'success' => 'Employee saved successfully!',
+            'success' => 'Category saved successfully!',
             'category' => $category,
         ]);
     }
@@ -48,14 +46,14 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
+            'title' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z ]+$/'],
+            'description' => ['nullable', 'string', 'max:300', 'regex:/^[a-zA-Z ]+$/'],
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
-
+        
         $category->update($validator->validated());
 
         return response()->json(['success' => 'Category updated successfully!', 'category' => $category]);

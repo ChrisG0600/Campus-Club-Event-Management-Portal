@@ -29,8 +29,11 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 // Only Club Admins can access these
 Route::middleware(['auth', 'role:club_admin'])->group(function () {
     Route::get('/club', [ClubController::class, 'index'])->name('club_admin.dashboard');
-    Route::get('/club/create', [ClubController::class, 'showForm'])->name('club_admin.showForm');
     Route::get('/club/manage', [ClubController::class, 'manageClub'])->name('club_admin.manage');
+    Route::get('/club/create', [ClubController::class, 'showForm'])->name('club_admin.showForm');
+    Route::post('/club/create', [ClubController::class, 'store'])->name('club_admin.store');
+    Route::get('/club/edit/{id}', [ClubController::class, 'edit'])->name('club_admin.edit');
+    Route::put('/club/update/{id}', [ClubController::class, 'update'])->name('club_admin.update');
     
     Route::get('/club/manage/announcement/create', [ClubAnnouncementController::class, 'create'])->name('create');
     Route::get('/club/applicants', [ClubApplicationController::class, 'showApplicant'])->name('club_admin.showApplicant');

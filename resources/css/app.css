@@ -3,6 +3,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 /* Super Admin - View List Student Table */
 .overflow-x-auto {
   overflow-x: auto;
@@ -30,4 +31,34 @@
 
 #edit-students-modal .relative.bg-white {
   background-color: white;
+}
+
+/* Super Admin - Club Description */
+.club-description {
+    display: -webkit-box; /* Required for -webkit-line-clamp */
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-clamp: 3; /* Standard, should be listed last */
+}
+
+.club-description-read-more {
+    background: white; /* To cover any fade effect */
+    color: blue;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding-left: 5px;
+    border: none;
+    outline: none;
+    font-size: inherit; /* Inherit font size for consistency */
+}
+
+.club-description-full {
+    white-space: pre-wrap;
+}
+
+.hidden {
+    display: none;
 }

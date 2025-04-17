@@ -1,3 +1,76 @@
+// Success Alert
+function successAlert(){
+  Swal.fire({
+    title: "Success!",
+    text: "Created successfully!",
+    icon: "success",
+  }).then(function () {
+    window.location.reload();
+  });
+}
+
+function editAlert(){
+  Swal.fire({
+    title: "Success!",
+    text: "Updated successfully!",
+    icon: "success",
+  }).then(function () {
+    window.location.reload();
+  });
+}
+
+// Delete Alert
+function deleteAlert(){
+  swla.file({
+    type: "Success",
+    title: "Success",
+    text: "Deleted Successfully",
+    icon: "success",
+  }).then(function(){
+    window.location.reload();
+  })
+}
+
+// Error Alert
+function errorAlert(){
+  Swal.fire({
+    title: "Error!",
+    text: "Something went wrong!",
+    icon: "error",
+  })
+}
+// Delete Functionality dynamic
+$(document).ready(function() {
+  $('.delete-btn').on('click', function(event) {
+    event.preventDefault();
+
+    const button = $(this);
+    const form = button.closest('form');
+    const dataName = button.data('name');
+
+    const confirmationTitle = dataName ? `Are you sure you want to delete ${dataName}?` : `Are you sure?`;
+    const confirmationText = dataName ? `You will not be able to recover ${dataName}?` : `You will not be able to recover this item!`;
+
+    Swal.fire({
+      title: confirmationTitle,
+      text: confirmationText,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit();
+        if(result.success){
+          deleteAlert();
+        }
+      }
+    });
+  });
+});
+// --------------------------------------------------------------------Admin Page--------------------------------------------------------------
 // AJAX Call for Adding Categories
 $(document).ready(function () {
   $("#add-category-form").submit(function (event) {
@@ -16,49 +89,32 @@ $(document).ready(function () {
       data: formData,
       success: function (response) {
         if(response.success){
-          alert(response.success);
           $('#title').val('');
           $('#description').val('');
-          location.reload();
+          Swal.fire({
+            title: "Success!",
+            text: response.success,
+            icon: "success",
+          }).then(function () {
+            window.location.reload();
+          });
           
-          // let newCategory = `
-          //   <tr>
-          //     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-          //       ${response.category.title}
-          //     </td>
-          //     <td class="px-6 py-4 text-sm text-gray-500">
-          //       ${response.category.description || "No description"}
-          //     </td>
-          //     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2 items-center">
-          //       <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-          //       <form method="POST" action="#"
-          //           onsubmit="return confirm('{{ __('Are you sure you want to delete this category?') }}');">
-          //           <input type="hidden" name="_token" value="${$(
-          //               'meta[name="csrf-token"]'
-          //           ).attr("content")}">
-          //           <input type="hidden" name="_method" value="DELETE">
-          //           <button type="submit" class="btn text-red-600 hover:text-red-900">Delete</button>
-          //       </form>
-          //     </td>
-          //   </tr>            
-          // `;
-          // $("#categories-table tbody").prepend(newCategory);
         } else{
-          alert(response.error);
+          errorAlert();
         }     
       },
       error: function (xhr) {
         if (xhr.responseJSON?.errors) {
           $.each(xhr.responseJSON.errors, function (field, messages) {
-            let inputField = $("input[name='" + field + "']");
+            let inputField = $("input[name='" + field + "'], textarea[name='" + field + "']");
             if (!inputField.next(".error-message").length) {
               inputField.after(
-                `<span class="text-danger error-message">${messages[0]}</span>`
+                `<span class="text-red-500 error-message">${messages[0]}</span>`
               );
             }
           });
         }else {
-          alert("Something went wrong. Please try again.");
+          errorAlert();
         }
       },
     });
@@ -105,10 +161,15 @@ $(document).ready(function () {
         },
         success: function(response) {
           if(response.success){
-            alert(response.success);
-            location.reload();
+            Swal.fire({
+              title: "Success!",
+              text: response.success,
+              icon: "success",
+            }).then(function () {
+              window.location.reload();
+            });
           } else{
-            alert(response.error);
+            errorAlert();
           }
         },
         error: function (xhr) {
@@ -122,7 +183,7 @@ $(document).ready(function () {
               }
             });
           } else {
-            alert("Something went wrong while updating. Please try again.");
+            errorAlert();
           }
         },
       })
@@ -182,10 +243,9 @@ $(document).ready(function(){
       },
       success: function(response) {
         if(response.success){
-          alert(response.success);
-          location.reload();
+          editAlert();
         } else{
-          alert(response.error);
+          errorAlert();
         }
       },
       error: function (xhr) {
@@ -199,7 +259,7 @@ $(document).ready(function(){
             }
           });
         } else {
-          alert("Something went wrong while updating. Please try again.");
+          errorAlert();
         }
       },
     })
@@ -214,7 +274,7 @@ $(document).ready(function(){
 // Search admin->students
 $(document).ready(function() {
   const $searchInput = $('#search');
-  const $studentTable = $("table tbody"); // Assuming you have an element with this ID
+  const $studentTable = $("table tbody");
 
   $searchInput.on('input', function() {
     const searchTerm = $(this).val().trim();
@@ -251,9 +311,11 @@ $(document).ready(function() {
         const row = `
           <tr class="bg-white border-b hover:bg-gray-100">
             <td class="py-3 px-4">${user.id}</td>
-            <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">${user.name}</th>
+            <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">${
+                user.name
+            }</th>
             <td class="py-3 px-4 text-gray-500">${user.email}</td>
-            <td class="py-3 px-4 text-gray-500">${user.role}</td>
+            <td class="py-3 px-4 text-gray-500">${user.formatted_role}</td>
             <td class="py-3 px-4 text-gray-500">${formattedDate}</td>
             <td class="py-3 px-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2 items-center">
               <button data-modal-target="edit-students-modal" data-modal-toggle="edit-students-modal"
@@ -263,11 +325,14 @@ $(document).ready(function() {
                   data-students-role="${user.role}"
                   class="font-medium text-blue-600 hover:underline cursor-pointer">Edit</button>
               <span class="text-gray-300 mx-2">|</span>
-              <form action="{{ route('super_admin.destroyStudent', ['studentsId' => '${user.id}']) }}" method="POST"
-                onsubmit="return confirm('{{ __('Are you sure you want to delete this category?') }}');">
-                <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr("content")}">
+              <form action="{{ route('super_admin.destroyStudent', ['studentsId' => '${
+                  user.id
+              }']) }}" method="POST">
+                <input type="hidden" name="_token" value="${$(
+                    'meta[name="csrf-token"]'
+                ).attr("content")}">
                 <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="btn text-red-600 hover:text-red-900">Delete</button>
+                <button type="submit" class="btn delete-btn text-red-600 hover:text-red-900">Delete</button>
               </form>
             </td>
           </tr>
@@ -283,6 +348,170 @@ $(document).ready(function() {
     }
   }
 });
+
+// -------------------------------------------------------------------Club Page----------------------------------------------------------------
+// Add Functionality for Create Club
+$(document).ready(function(){
+  $("#add-club-form").submit(function (event) {
+    event.preventDefault();
+    $(".error-message").remove();
+
+    const form = $(this); // Get the form element
+    const url = form.attr('action'); // Get the form action URL
+    const type = 'POST'; // Get the form method 
+
+    let formDataObject = {
+      club_name: $("#club_name").val(),
+      club_description: $("#club_description").val(),
+      club_email: $("#club_email").val(),
+      club_advisor: $("#club_advisor").val(),
+      category_id: $('#category_id').val(),
+      _token: $('meta[name="csrf-token"]').attr("content"),
+    };
+
+    // Logo Optional
+    const logoFile = $("#club_logo")[0].files[0];
+    if (logoFile) {
+      formDataObject.club_logo = logoFile;
+    }
+
+    let formData = new FormData();
+    for (const key in formDataObject) {
+      formData.append(key, formDataObject[key]); // Loop to populate FormData
+    }
+
+    $.ajax({
+      url:url,
+      type: type,
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success:function(response){
+        if(response.success){
+          Swal.fire({
+            title: "Success!",
+            text: response.message,
+            icon: "success",
+          }).then(function () {
+            window.location.reload();
+          })
+        }else{
+          Swal.fire({
+            title: "Error!",
+            text:
+              response.message || "An unexpected error occurred.",
+            icon: "error",
+          });
+        }
+      },error: function (xhr) {
+        if (xhr.responseJSON?.errors) {
+          $.each(xhr.responseJSON.errors, function (field, messages) {
+            let inputField = $("input[name='" + field + "'], textarea[name='" + field + "']");
+            if (!inputField.next(".error-message").length) {
+              inputField.after(
+                `<span class="text-red-500 error-message">${messages[0]}</span>`
+              );
+            }
+          });
+        }else {
+          Swal.fire({
+            title: "Error!",
+            text: xhr.responseJSON?.message || "An unexpected error occurred.",
+            icon: "error",
+          });
+        }
+      },
+    })
+  });
+});
+
+// Edit Functionality for Update Club
+$(document).ready(function(){
+  $('#edit-club-form').submit(function(event){
+    event.preventDefault();
+    $(".error-message").remove();
+
+    const form = $(this); // Get the form element
+    const url = form.attr('action'); // Get the form action URL
+    const type = 'POST'; // Get the form method
+
+    let formDataObject = {
+      _method: 'PUT',
+      id: $('#edit_club_id').val(),
+      club_name: $("#edit_club_name").val(),
+      club_description: $("#edit_club_description").val(),
+      club_email: $("#edit_club_email").val(),
+      club_advisor: $("#edit_club_advisor").val(),
+      category_id: $('#edit_category_id').val(),
+      _token: $('meta[name="csrf-token"]').attr("content"),
+    };
+
+    // Logo Optional
+    const logoFile = $("#edit_club_logo")[0].files[0];
+    if (logoFile) {
+      formDataObject.club_logo = logoFile;
+    }
+
+    let formData = new FormData();
+    for (const key in formDataObject) {
+      formData.append(key, formDataObject[key]); // Loop to populate FormData
+    }
+
+    $.ajax({
+      url:url,
+      type: type,
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response){
+        if(response.success){
+          Swal.fire({
+            title: "Awesome!",
+            text: response.message,
+            icon: "success",
+          }).then(function () {
+            window.location.reload();
+          })
+        }else{
+          Swal.fire({
+            title: "Error!",
+            text:
+              response.message || "An unexpected error occurred.",
+            icon: "error",
+          });
+        }
+      },error: function (xhr) {
+        if (xhr.responseJSON?.errors) {
+          $.each(xhr.responseJSON.errors, function (field, messages) {
+            let inputField = $("input[name='" + field + "'], textarea[name='" + field + "'], select[name='" + field + "']");
+            if (!inputField.next(".error-message").length) {
+              inputField.after(
+                `<span class="text-red-500 error-message">${messages[0]}</span>`
+              );
+            }
+          });
+        }else {
+          Swal.fire({
+            title: "Error!",
+            text: xhr.responseJSON?.message || "An unexpected error occurred.",
+            icon: "error",
+          });
+        }
+      },
+    })
+  })
+});
+
+
+
+
+
 
 
 

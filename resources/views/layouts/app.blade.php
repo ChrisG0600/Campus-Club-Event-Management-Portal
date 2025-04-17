@@ -12,6 +12,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
         <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @vite(['resources/css/app.css'])
     </head>
     <body class="font-sans antialiased">
@@ -34,8 +35,8 @@
         </div>
 
 
-
-
+        {{-- Fix Later --}}
+        {{-- @include('partials.successAlert') --}}
 
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

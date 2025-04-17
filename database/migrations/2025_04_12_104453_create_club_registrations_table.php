@@ -13,14 +13,17 @@ return new class extends Migration
     {
         Schema::create('club_registrations', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->foreignId('created_by')->constrained('users')->onDelete('SET NULL');
             $table->string('club_name')->unique();
             $table->text('club_description');
             $table->string('club_logo')->nullable();
             $table->string('club_email')->unique();
             $table->string('club_advisor');
             $table->timestamps();
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('SET NULL');
+            $table->index('created_by');
         });
     }
 

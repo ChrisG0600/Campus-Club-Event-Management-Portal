@@ -29,15 +29,16 @@
                 placeholder="{{ __('Category Title') }}" required>
             </div>
             <div class="mb-4">
-              <label for="description" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Description
-                (Optional)')
-                }}</label>
+              <div class="flex items-center justify-between">
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Description (Optional)') }}</label>
+                <p class="text-end text-gray-400 text-sm">{{ __('max 300 characters') }}</p>
+              </div>
               <textarea name="description" id="description"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="{{ __('Category Description') }}"></textarea>
             </div>
             <button type="submit"
-              class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
+              class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm mt-4 px-5 py-2.5 text-center">
               {{ __('Add') }}
             </button>
           </form>
@@ -46,20 +47,20 @@
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
           <h3 class="font-semibold text-lg text-gray-800 p-6 border-b border-gray-200">{{ __('Manage Categories') }}
           </h3>
-          <div class="overflow-x-auto p-6">
+          <div class="overflow-x-auto p-5">
             <table id="categories-table" class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
                   <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    class="px-2 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider title-column">
                     {{ __('Title') }}
                   </th>
                   <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    class="px-2 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ __('Description') }}
                   </th>
                   <th scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    class="px-2 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ __('Action') }}
                   </th>
                 </tr>
@@ -67,20 +68,25 @@
               <tbody class="bg-white divide-y divide-gray-200" id="categories-table-body">
                 @forelse ($categories as $category)
                 <tr>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $category->title }}</td>
-                  <td class="px-6 py-4 text-sm text-gray-500">{{ $category->description ?? __('No description') }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2 items-center">
+                  <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900 title-column">{{ $category->title }}</td>
+                  <td class="px-2 py-4 text-sm text-gray-500 club-description-container">
+                    <p class="club-description">{{ $category->description ?? __('No description') }}</p>
+                    @if (strlen($category->description ?? '') > 300)
+                      <button type="button" class="club-description-read-more">{{ __('Read More') }}</button>
+                    @endif
+                      <p class="club-description-full hidden">{{ $category->description ?? __('No description') }}</p>
+                  </td>
+                  <td class="px-2 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2 items-center">
                     <button type="button" data-modal-target="edit-category" data-modal-toggle="edit-category"
                       class="text-indigo-600 hover:text-indigo-900" data-category-id="{{ $category->id }}"
                       data-category-title="{{ $category->title }}"
                       data-category-description="{{ $category->description}}">{{ __('Edit') }}</button>
-                    <form method="POST"
-                      action="{{ route('super_admin.categories.destroy', ['category' => $category]) }}"
-                      onsubmit="return confirm('{{ __('Are you sure you want to delete this category?') }}');">
+                    <form method="POST" action="{{ route('super_admin.categories.destroy', ['category' => $category]) }} " data-redirect-url="{{ route('super_admin.categories.index') }}">
                       @csrf
                       @method('DELETE')
-                      <button type="submit" class="btn text-red-600 hover:text-red-900">{{ __('Delete') }}</button>
-                    </form>
+                      <button type="submit" class="btn text-red-600 hover:text-red-900 delete-btn" data-name="{{ $category->title }}"
+                      id="deleteCategoryForm_{{ $category->id }}">{{ __('Delete') }}</button>
+                    </form> 
                   </td>
                 </tr>
                 @empty
@@ -118,7 +124,7 @@
             <span class="sr-only">{{ __('Close modal') }}</span>
           </button>
         </div>
-        <form action="{{ route('super_admin.categories.update', ['category' => $category]) }}" method="POST" class="p-6"
+        <form action="{{ route('super_admin.categories.update', ['category' => $categories]) }}" method="POST" class="p-6"
           id="edit-category-form">
           @csrf
           @method('PUT')
@@ -130,11 +136,13 @@
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           </div>
           <div class="mb-4">
-            <label for="description" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Description (Optional)')
-              }}</label>
+            <div class="flex items-center justify-between">
+              <label for="description" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Description (Optional)') }}</label>
+              <p class="text-end text-gray-400 text-sm">{{ __('max 300 characters') }}</p>
+            </div>
             <textarea name="description" id="edit_description"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="{{ __('Category Description') }}"></textarea>
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="{{ __('Category Description') }}"></textarea>
           </div>
           <button type="submit"
             class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
