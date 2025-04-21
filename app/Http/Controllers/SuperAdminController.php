@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\ClubRegistration;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -99,7 +101,11 @@ class SuperAdminController extends Controller
     }
     public function showClub()
     {
-        return view('admin.club.show');
+        $pendingClubsCount = ClubRegistration::where('is_pending', true)->count();
+        $registeredClub = ClubRegistration::where('is_pending', false)->count();
+
+        $categoryCount = Category::all()->count();
+        return view('admin.club.show', compact('pendingClubsCount', 'registeredClub', 'categoryCount'));
     }
 
     public function showClubDeletionRequests()
@@ -114,7 +120,16 @@ class SuperAdminController extends Controller
 
     public function showClubRegistrationClubs()
     {
-        return view('admin.club.registration.registrationClubs');
+        $clubRegistration = ClubRegistration::with('creator','category')->where('is_pending', true)->get();
+        return view('admin.club.registration.registrationClubs', compact('clubRegistration'));
+    }
+
+    public function approveClubRegistration($id)
+    {
+        $clubRegistration = ClubRegistration::findorFail($id);
+        $clubRegistration->is_pending = false;
+        $clubRegistration->save();
+        return response()->json(['message' => 'Club approved successfully.']);
     }
 
     public function showPendingAnnouncement()

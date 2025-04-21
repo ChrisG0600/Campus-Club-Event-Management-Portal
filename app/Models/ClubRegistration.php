@@ -16,6 +16,10 @@ class ClubRegistration extends Model
         'club_logo',
         'club_email',
         'club_advisor',
+        'why_join',
+        'activities',
+        'is_pending',
+        'rejected_reason',
     ];
 
     public function category(): BelongsTo

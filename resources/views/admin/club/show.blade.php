@@ -11,6 +11,9 @@
             <div>
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-medium text-gray-900">{{ __('Manage Categories') }}</h3>
+                <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                  {{ $categoryCount . __(' Categories') }}
+                </span>
               </div>
               <p class="mt-1 text-sm text-gray-500">{{ __('View, edit, and delete club categories.') }}
               </p>
@@ -36,7 +39,7 @@
                 <h3 class="text-lg font-medium text-gray-900">{{ __('Registered Clubs') }}</h3>
                 <span
                   class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                  50 {{ __('Clubs') }}
+                  {{ $registeredClub . __(' Clubs') }}
                 </span>
               </div>
               <p class="mt-1 text-sm text-gray-500">{{ __('View and manage all registered clubs.') }}</p>
@@ -89,7 +92,7 @@
                 <h3 class="text-lg font-medium text-gray-900">{{ __('Pending Club Registrations') }}</h3>
                 <span
                   class="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
-                  100 {{ __('Pending') }}
+                  {{ $pendingClubsCount . __(' Pending') }}
                 </span>
               </div>
               <p class="mt-1 text-sm text-gray-500">{{ __('Review and approve or reject new club registration

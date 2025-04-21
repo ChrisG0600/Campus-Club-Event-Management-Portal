@@ -44,6 +44,8 @@ class ClubController extends Controller
                 'club_advisor' => 'required|string|max:255',
                 'category_id' => 'required|exists:categories,id',
                 'created_by' => 'nullable|exists:users,id',
+                'why_join' => 'nullable|string|max:300',
+                'activities' => 'nullable|string|max:300',
             ]);
 
             if ($validator->fails()) {
@@ -75,8 +77,9 @@ class ClubController extends Controller
     // Manage Club
     public function manageClub()
     {
-        $clubs = ClubRegistration::with('creator')->get();
-        $announcements = ClubAnnouncement::with('creator')->get();
+        $userId = auth()->id();
+        $clubs = ClubRegistration::with('creator')->where('created_by', $userId)->get();
+        $announcements = ClubAnnouncement::with('creator')->where('created_by', $userId)->get();
         return view('club.manage', compact('clubs', 'announcements'));
     }
 
@@ -95,7 +98,6 @@ class ClubController extends Controller
     // Update Club
     public function update(Request $request, $id)
     {
-        //Log::info('Request All: ' . print_r($request->all(), true));
         try {
             $validator = Validator::make($request->all(),[
                 'id' => 'required',
@@ -106,6 +108,8 @@ class ClubController extends Controller
                 'club_advisor' => 'required|string|max:255',
                 'category_id' => 'required|exists:categories,id',
                 'created_by' => 'nullable|exists:users,id',
+                'why_join' => 'required|string|max:300',
+                'activities' => 'required|string|max:300',
             ]);
 
             if ($validator->fails()) {

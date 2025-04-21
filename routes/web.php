@@ -23,7 +23,11 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:student'])->group(function () {
     Route::get('/student', [StudentController::class, 'index'])->name('student.dashboard');
     Route::get('/student/announcement', [StudentController::class, 'showAnnouncement'])->name('student.announcement');
+
     Route::get('/student/club', [StudentController::class, 'showClub'])->name('student.club.index');
+    Route::get('/student/club/category/{id}', [StudentController::class, 'showClubList'])->name('student.clublist');
+    Route::get('/student/club/category/{club}/{id}', [StudentController::class, 'showClubDetails'])->name('student.club.details');
+
     Route::get('/student/event', [StudentController::class, 'showEvent'])->name('student.event.index');
 });
 // Only Club Admins can access these
@@ -61,6 +65,7 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::get('/club/deletion-requests', [SuperAdminController::class, 'showClubDeletionRequests'])->name('super_admin.showClubDeletionRequests');
     Route::get('/club/registered', [SuperAdminController::class, 'showRegisteredClubs'])->name('super_admin.showRegisteredClubs');
     Route::get('/club/registration-requests', [SuperAdminController::class, 'showClubRegistrationClubs'])->name('super_admin.showClubRegistrationRequests');
+    Route::put('/club/registration-requests/{id}', [SuperAdminController::class, 'approveClubRegistration'])->name('super_admin.approveClubRegistration');
     Route::get('/club/pending-announcement', [SuperAdminController::class, 'showPendingAnnouncement'])->name('super_admin.showPendingAnnouncement');
 
     // CRUD for categories

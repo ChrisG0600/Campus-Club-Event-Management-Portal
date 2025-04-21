@@ -6,39 +6,15 @@
           <h3 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Discover New Clubs') }}</h3>
           <p class="text-gray-500 text-sm mb-2">{{ __('Explore clubs based on your interests.') }}</p>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            <a href="#" class="border rounded-md p-3 text-center hover:shadow-md transition duration-200">
-              <img src="https://via.placeholder.com/50x50/abcdef/ffffff/?Text=Art" alt="Club Category"
-                class="mx-auto mb-2 rounded-full">
-              <span class="text-sm text-indigo-600 font-semibold">{{ __('Art Clubs') }}</span>
-            </a>
-            <a href="#" class="border rounded-md p-3 text-center hover:shadow-md transition duration-200">
-              <img src="https://via.placeholder.com/50x50/fedcba/ffffff/?Text=Tech" alt="Club Category"
-                class="mx-auto mb-2 rounded-full">
-              <span class="text-sm text-green-600 font-semibold">{{ __('Tech Clubs') }}</span>
-            </a>
-            <a href="#" class="border rounded-md p-3 text-center hover:shadow-md transition duration-200">
-              <img src="https://via.placeholder.com/50x50/aabbcc/ffffff/?Text=Sports" alt="Club Category"
-                class="mx-auto mb-2 rounded-full">
-              <span class="text-sm text-blue-600 font-semibold">{{ __('Sports Clubs') }}</span>
-            </a>
-            <a href="#" class="border rounded-md p-3 text-center hover:shadow-md transition duration-200">
-              <img src="https://via.placeholder.com/50x50/ddeeff/ffffff/?Text=Social" alt="Club Category"
-                class="mx-auto mb-2 rounded-full">
-              <span class="text-sm text-yellow-600 font-semibold">{{ __('Social Clubs') }}</span>
-            </a>
-            <a href="#" class="border rounded-md p-3 text-center hover:shadow-md transition duration-200">
-              <img src="https://via.placeholder.com/50x50/ffaaaa/ffffff/?Text=Music" alt="Club Category"
-                class="mx-auto mb-2 rounded-full">
-              <span class="text-sm text-pink-600 font-semibold">{{ __('Music Clubs') }}</span>
-            </a>
-            <a href="#" class="border rounded-md p-3 text-center hover:shadow-md transition duration-200">
-              <img src="https://via.placeholder.com/50x50/ccffcc/000000/?Text=Drama" alt="Club Category"
-                class="mx-auto mb-2 rounded-full">
-              <span class="text-sm text-lime-600 font-semibold">{{ __('Drama Clubs') }}</span>
-            </a>
-            {{-- Add more categories here --}}
+            @forelse ( $categories as $category )
+              <a href="{{ route('student.clublist', ['id' => $category->id]) }}" class="border rounded-md p-3 text-center hover:shadow-md transition duration-200">
+                <span class="text-sm text-indigo-600 font-semibold">{{ $category->title }}</span>
+              </a>
+            @empty
+              <h5>No  Category</h5>
+            @endforelse
           </div>
-          <a href="#" class="block mt-4 text-indigo-500 hover:underline text-sm">{{ __('Browse All Clubs') }}</a>
+          {{-- <a href="#" class="block mt-4 text-indigo-500 hover:underline text-sm">{{ __('Browse All Clubs') }}</a> --}}
         </div>
       </div>
     </div>

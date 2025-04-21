@@ -7,6 +7,18 @@
           <form class="space-y-6" id="add-announcement-form" method="POST" action="{{ route('club_admin.announcement.store') }}">
             @csrf
             <div>
+              <label for="club_id" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Announcement for Club: ') }}</label>
+              <select id="club_id" name="club_id" required
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="">{{ __('-- Choose a Club --') }}</option>
+                @foreach($club as $clubData) 
+                  <option value="{{ $clubData->id}}">
+                    {{ $clubData->club_name }}
+                  </option>
+                @endforeach
+              </select>
+            </div>
+            <div>
               <label for="title" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Title') }}</label>
               <input type="text" id="title" name="title"
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

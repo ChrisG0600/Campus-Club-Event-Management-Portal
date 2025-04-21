@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClubAnnouncement;
+use App\Models\ClubRegistration;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,7 +13,9 @@ class ClubAnnouncementController extends Controller
     // Create Form
     public function create()
     {
-        return view('club.announcement.create');
+        $userId = auth()->id();
+        $club = ClubRegistration::where('created_by', $userId)->get();
+        return view('club.announcement.create', compact('club'));
     }
 
     // Store Announcement
@@ -34,6 +37,7 @@ class ClubAnnouncementController extends Controller
                 }
             }
             $validator = Validator::make($request->all(), [
+                'club_id' => 'required|exists:club_registrations,id',
                 'title' => 'required|string|max:255|regex:/^[a-zA-Z ]+$/',
                 'content' => 'required|string|max:1000|regex:/^[a-zA-Z ]+$/',
                 'announcement_date' => 'required|date_format:Y-m-d',

@@ -191,6 +191,72 @@ $(document).ready(function () {
     
 });
 
+// Club Pending View Club Details
+$(document).ready(function () {
+  const viewClubModal = $("#view-details-modal");
+  const viewClubCategory = $("#modal-club-category");
+  const viewClubName = $("#modal-club-name");
+  const viewClubCreator = $("#modal-creator-name");
+  const viewClubEmail = $("#modal-club-email");
+  const viewClubAdvisor = $("#modal-club-advisor");
+  const viewClubDescription = $("#modal-description");
+  const viewClubWhyJoin = $("#modal-why-join-us");
+  const viewClubActivities = $("#modal-activities");
+
+  $('[data-modal-target="view-details-modal"]').on("click", function() {
+    const category = $(this).data("category");
+    const clubName = $(this).data("clubName");
+    const clubCreator = $(this).data("creatorName");
+    const clubEmail = $(this).data("email");
+    const clubAdvisor = $(this).data("clubAdvisor");
+    const clubDescription = $(this).data("description");
+    const clubWhyJoin = $(this).data("whyJoinUs");
+    const clubActivities = $(this).data("activities");
+    const clubCategory = $(this).data("category");
+
+    viewClubCategory.text(clubCategory);
+    viewClubName.text(clubName);
+    viewClubCreator.text(clubCreator);
+    viewClubEmail.text(clubEmail);
+    viewClubAdvisor.text(clubAdvisor);
+    viewClubDescription.text(clubDescription);
+    viewClubWhyJoin.text(clubWhyJoin);
+    viewClubActivities.text(clubActivities);
+
+  });
+});
+
+// Approved Club Pending
+$(document).on('click', '.btn-approve', function () {
+  const clubId = $(this).data('id');
+
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You want to approve this club?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, approve it!'
+  }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/club/registration-requests/${clubId}`,
+          type: 'PUT',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+          },
+          success: function (response) {
+            Swal.fire('Approved!', response.message, 'success').then(()=> window.location.reload());
+          },
+          error: function (xhr) {
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        });
+      }
+  });
+});
+
+// Implement reject pending club with message via modal
+
 // Edit Functionality for Admin->Students
 $(document).ready(function(){
   const editStudentModal = $("#edit-students-modal");
@@ -359,13 +425,15 @@ $(document).ready(function(){
     const form = $(this); // Get the form element
     const url = form.attr('action'); // Get the form action URL
     const type = 'POST'; // Get the form method 
-
+    
     let formDataObject = {
       club_name: $("#club_name").val(),
       club_description: $("#club_description").val(),
       club_email: $("#club_email").val(),
       club_advisor: $("#club_advisor").val(),
       category_id: $('#category_id').val(),
+      why_join: $('#why_join').val(),
+      activities: $('#activities').val(),
       _token: $('meta[name="csrf-token"]').attr("content"),
     };
 
@@ -446,6 +514,8 @@ $(document).ready(function(){
       club_email: $("#edit_club_email").val(),
       club_advisor: $("#edit_club_advisor").val(),
       category_id: $('#edit_category_id').val(),
+      why_join: $('#edit_why_join').val(),
+      activities: $('#edit_activities').val(),
       _token: $('meta[name="csrf-token"]').attr("content"),
     };
 
@@ -611,7 +681,6 @@ $(document).ready(function(){
     })
   })
 });
-
 
 
 
