@@ -27,6 +27,9 @@ Route::middleware(['auth', 'role:student'])->group(function () {
     Route::get('/student/club', [StudentController::class, 'showClub'])->name('student.club.index');
     Route::get('/student/club/category/{id}', [StudentController::class, 'showClubList'])->name('student.clublist');
     Route::get('/student/club/category/{club}/{id}', [StudentController::class, 'showClubDetails'])->name('student.club.details');
+    Route::post('/student/club/apply', [StudentController::class, 'store'])->name('student.club.apply');
+    Route::put('/student/club/re-apply', [StudentController::class, 'update'])->name('student.club.reapply');
+    Route::put('/student/club/{id}/withdraw', [StudentController::class, 'withdraw'])->name('student.club.withdraw');
 
     Route::get('/student/event', [StudentController::class, 'showEvent'])->name('student.event.index');
 });
@@ -46,10 +49,17 @@ Route::middleware(['auth', 'role:club_admin'])->group(function () {
     Route::delete('/club/manage/announcement/delete/{id}', [ClubAnnouncementController::class, 'destroy'])->name('club_admin.announcement.destroy');
 
 
-
     Route::get('/club/applicants', [ClubApplicationController::class, 'showApplicant'])->name('club_admin.showApplicant');
-    // Change to {id} 
-    Route::get('/club/applicants/1', [ClubApplicationController::class, 'show'])->name('club_admin.show');
+    Route::get('/club/{club}/applicants/pending', [ClubApplicationController::class, 'showPendingApplicant'])->name('club_admin.showPendingApplicant');
+    Route::get('/club/{club}/applicants/rejected', [ClubApplicationController::class, 'showRejectedApplicant'])->name('club_admin.showRejectedApplicant');
+    Route::get('/club/{club}/applicants/closed', [ClubApplicationController::class, 'showClosedApplicants'])->name('club_admin.showClosedApplicants');
+    Route::get('/club/{club}/members', [ClubApplicationController::class, 'showMembers'])->name('club_admin.showMembers');
+
+    Route::get('/club/applicants/{id}', [ClubApplicationController::class, 'show'])->name('club_admin.show');
+    Route::put('/club/applicants/{id}/remove', [ClubApplicationController::class, 'removeMember'])->name('club_admin.removeMember');
+    Route::put('/club/applicants/{id}/approve', [ClubApplicationController::class, 'approvePendingMember'])->name('club_admin.approvePendingMember');
+    Route::put('/club/applicants/{id}/reject', [ClubApplicationController::class, 'rejectPendingMember'])->name('club_admin.rejectPendingMember');
+    Route::put('/club/applicants/{id}/decline', [ClubApplicationController::class, 'declinedPendingMember'])->name('club_admin.declinedPendingMember');
 });
 
 // Only Super Admins can access admin stuff

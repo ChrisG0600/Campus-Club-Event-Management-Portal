@@ -58,7 +58,7 @@
                   </td>
                   <td class="py-4 px-6 flex space-x-2">
                     <button type="submit" data-id= {{$clubPending->id}}
-                      class="btn-approve inline-flex items-center rounded-md bg-green-50 px-2.5 py-1.5 text-xs font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                      class="btn-approve-club inline-flex items-center rounded-md bg-green-50 px-2.5 py-1.5 text-xs font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                       {{ __('Approve') }}
                     </button>
                     <a href="#"

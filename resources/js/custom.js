@@ -188,7 +188,6 @@ $(document).ready(function () {
         },
       })
     })
-    
 });
 
 // Club Pending View Club Details
@@ -227,7 +226,7 @@ $(document).ready(function () {
 });
 
 // Approved Club Pending
-$(document).on('click', '.btn-approve', function () {
+$(document).on('click', '.btn-approve-club', function () {
   const clubId = $(this).data('id');
 
   Swal.fire({
@@ -682,6 +681,515 @@ $(document).ready(function(){
   })
 });
 
+// Making the div table to visible
+$(document).ready(function (){
+  $(".club-card").click(function(){
+    const club = $(this).data('clubId');
+    const header = $(this).attr('data-club-name');
+    const clubManagementSection = $("#clubManagementSection");
+    const currentMembersTableBody = $("#currentMembersTableBody tbody");
+    const pendingApplicantsTableBody = $("#pendingApplicantsTable tbody");
+    const rejectedApplicantsTableBody = $("#rejectedApplicantsTable tbody");
+    const declinedAndWithdrawnApplicantsTable = $("#declinedAndWithdrawnApplicantsTable tbody");
+    clubManagementSection.removeClass("hidden");
+    $("#clubManagementSection h3").text(
+      "Manage Members & Applications for Club: " + header
+    );
+    
+    // Request to fetch Club Members to display on the table
+    $.ajax({
+      url: `/club/${club}/members`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(members){
+        currentMembersTableBody.empty(); 
+        if (members.length > 0) {
+            $.each(members, function (index, member) {
+              const row = `
+            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+              <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">${member.name}</th>
+              <td class="py-3 px-4 text-gray-700">${member.email}</td>
+              <td class="py-3 px-4 text-gray-700">${member.student_number}</td>
+              <td class="py-3 px-4 text-gray-700">${member.created_at}</td>
+              <td class="py-3 px-4 text-gray-700">${member.role}</td>
+              <td class="py-3 px-4">
+                <button type="submit" data-id="${member.id}"
+                  class="btn-remove-member inline-flex items-center px-2 py-1 bg-red-300 border border-transparent rounded-md font-semibold text-xs text-red-700 uppercase tracking-widest hover:bg-red-400 focus:outline-none focus:ring focus:ring-red-200 disabled:opacity-25 transition ease-in-out duration-150">
+                    Remove
+                </button>
+              </td>
+            </tr>
+            `;
+              currentMembersTableBody.append(row);
+            });
+        }else {
+          const noMembersRow = `
+            <tr>
+              <td class="py-4 px-6 text-center" colspan="6">No members in this club.</td>
+            </tr>
+          `;
+          currentMembersTableBody.append(noMembersRow);
+        }
+      },
+      error: function(error){
+        swal.fire({
+          title: "Error!",
+          text: "Unable to fetch members.",
+          icon: "error",
+        });
+      }
+    });
+
+    // Request to fetch Pending Members to display on the table
+    $.ajax({
+      url: `/club/${club}/applicants/pending`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(pendingMembers){
+        pendingApplicantsTableBody.empty();
+        if (pendingMembers.length > 0) {
+        $.each(pendingMembers, function(index, pending){
+          const row = `
+            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+              <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">${pending.name}</th>
+              <td class="py-3 px-4 text-gray-700">${pending.email}</td>
+              <td class="py-3 px-4 text-gray-700">${pending.created_at}</td>
+              <td class="py-3 px-4">
+                <a href="/club/applicants/${pending.id}"
+                  class="inline-flex items-center px-3 py-2 bg-blue-300 border border-transparent rounded-md font-semibold text-xs text-blue-700 uppercase tracking-widest hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-200 disabled:opacity-25 transition ease-in-out duration-150">
+                    View Details
+                </a>
+              </td>
+            </tr>
+          `;
+          pendingApplicantsTableBody.append(row);
+        });
+        }else {
+          const noPendingRow = `
+            <tr>
+              <td class="py-4 px-6 text-center" colspan="6">No Pending Application.</td>
+            </tr>
+          `;
+          pendingApplicantsTableBody.append(noPendingRow);
+        }
+      },
+      error: function(error){
+        swal.fire({
+          title: "Error!",
+          text: "Unable to fetch pending members.",
+          icon: "error",
+        });
+      }
+    });
+
+    // Request to fetch Rejected Applicants to display on the table
+    $.ajax({
+      url: `/club/${club}/applicants/rejected`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(rejectedMembers){
+        rejectedApplicantsTableBody.empty();
+        if (rejectedMembers.length > 0) {
+        $.each(rejectedMembers, function(index, rejected){
+          const row = `
+            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+              <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">${rejected.student_number}</th>
+              <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">${rejected.name}</th>
+              <td class="py-3 px-4 text-gray-700">${rejected.email}</td>
+              <td class="py-3 px-2 text-gray-700">${rejected.submission_count}</td>
+              <td class="py-3 px-4 text-gray-700">${rejected.created_at}</td>
+              <td class="py-3 px-4">
+                <a href="/club/applicants/${rejected.id}"
+                  class="inline-flex items-center px-3 py-2 bg-blue-300 border border-transparent rounded-md font-semibold text-xs text-blue-700 uppercase tracking-widest hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-200 disabled:opacity-25 transition ease-in-out duration-150">
+                    View Details
+                </a>
+              </td>
+            </tr>
+          `;
+          rejectedApplicantsTableBody.append(row);
+        });
+        }else {
+          const noRejectedrow = `
+            <tr>
+              <td class="py-4 px-6 text-center" colspan="6">No Rejected Application.</td>
+            </tr>
+          `;
+          rejectedApplicantsTableBody.append(noRejectedrow);
+        }
+      },
+      error: function(error){
+        swal.fire({
+          title: "Error!",
+          text: "Unable to fetch rejected members.",
+          icon: "error",
+        });
+      }
+    });
+
+    // Request to fetch Declined/Withdrawn Applicants to display on the table
+    $.ajax({
+      url: `/club/${club}/applicants/closed`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(closedMember){
+        declinedAndWithdrawnApplicantsTable.empty();
+        if (closedMember.length > 0) {
+        $.each(closedMember, function(index, closed){
+          const row = `
+            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+              <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">${closed.name}</th>
+              <td class="py-3 px-4 text-gray-700">${closed.email}</td>
+              <td class="py-3 px-4 text-gray-700">${closed.declined_at}</td>
+              <td class="py-3 px-4">
+                <a href="/club/applicants/${closed.id}"
+                  class="inline-flex items-center px-3 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-200 disabled:opacity-25 transition ease-in-out duration-150">
+                    View Reason
+                </a>
+              </td>
+            </tr>
+          `;
+          declinedAndWithdrawnApplicantsTable.append(row);
+        });
+        }else {
+          const noDeclinedAndWithdrawnRow = `
+            <tr>
+              <td class="py-4 px-6 text-center" colspan="6">No Rejected/Withdrawn Application.</td>
+            </tr>
+          `;
+          declinedAndWithdrawnApplicantsTable.append(noDeclinedAndWithdrawnRow);
+        }
+      },
+      error: function(error){
+        swal.fire({
+          title: "Error!",
+          text: "Unable to fetch rejected/withdrawn members.",
+          icon: "error",
+        });
+        console.log(error);
+      }
+    });
+
+  });
+
+  // Below are action methods
+
+  // Approved Pending Member
+  $(document).on('click', '.btn-remove-member', function () {
+    const id = $(this).data('id');
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to remove this club member?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, remove it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/club/applicants/${id}/remove`,
+          type: 'PUT',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+          },
+          success: function (response) {
+            Swal.fire('Removed!', response.message, 'success').then(() => {
+              window.location.href = "/club/applicants"; 
+            });
+          },
+          error: function (xhr) {
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        });
+      }
+    });
+  });
+  // Approved Pending Member
+  $(document).on('click', '.btn-approve-applicant', function () {
+    const id = $(this).data('id');
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to approve this club?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, approve it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/club/applicants/${id}/approve`,
+          type: 'PUT',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+          },
+          success: function (response) {
+            Swal.fire('Approved!', response.message, 'success').then(() => {
+              window.location.href = "/club/applicants"; 
+            });
+          },
+          error: function (xhr) {
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        });
+      }
+    });
+  });
+  // Reject Pending Member
+  $(document).on('click', '.btn-reject-applicant', function () {
+    const id = $(this).data('id');
+    const reject_message = $("#reject_message").val();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to reject this applicant with the provided reason?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, reject!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/club/applicants/${id}/reject`,
+          type: 'PUT',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            reject_message: reject_message,
+          },
+          success: function (response) {
+            Swal.fire('Rejected!', response.message, 'success').then(() => {
+              window.location.href = "/club/applicants"; 
+            });
+          },
+          error: function (xhr) {
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        });
+      }
+    });
+  });
+  // Decline  Member
+  $(document).on('click', '.btn-decline-applicant', function () {
+    const id = $(this).data('id');
+    const decline_reason = $("#decline_reason").val();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to decline this applicant with the provided reason?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, decline!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/club/applicants/${id}/decline`,
+          type: 'PUT',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            decline_reason: decline_reason,
+          },
+          success: function (response) {
+            Swal.fire('Declined!', response.message, 'success').then(() => {
+              window.location.href = "/club/applicants"; 
+            });
+          },
+          error: function (xhr) {
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        });
+      }
+    });
+  });
+
+});
+
+// -------------------------------------------------------------------Student Page----------------------------------------------------------------
+// Store the Application of student on Club
+$(document).ready(function(){
+  $("#join-club-form").submit(function(event){
+    event.preventDefault();
+    $(".error-message").remove();
+    const form = $(this); // Get the form element
+    const url = form.attr('action'); // Get the form action URL
+    const type = 'POST'; // Get the form method
+    const data = form.serialize(); // Serialize the form data
+
+    $.ajax({
+      url: url,
+      type: type,
+      data: data,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success:function(response){
+        if(response.success){
+          swal.fire({
+            title: "Success!",
+            text: response.message,
+            icon: "success",
+          }).then(function () {
+            window.location.reload();
+          })
+        }else{
+          swal.fire({
+            title: "Error!",
+            text: response.message || "An unexpected error occurred.",
+            icon: "error",
+          })
+        }
+      },
+      error: function (xhr) {
+        if (xhr.responseJSON?.errors) {
+          $.each(xhr.responseJSON.errors, function (field, messages) {
+            let inputField = $("input[name='" + field + "'], textarea[name='" + field + "']");
+            if (!inputField.next(".error-message").length) {
+              inputField.after(
+                `<span class="text-red-500 error-message">${messages[0]}</span>`
+              );
+            }
+          });
+        }else {
+          errorAlert();
+        }
+      },
+    })
+  });
+});
+
+// Populate the rejected message on student club page
+$(document).ready(function () {
+  const viewClubApplicantID = $("#applicant_id");
+  const viewClubRejectMessage = $("#rejection-message");
+  const viewStudentNumber = $("#student_number");
+  const viewWhyInterested = $("#why_interested");
+  const viewExperience = $("#experience");
+  const rejectionReasonSpan = $(".bg-gray-100 .text-red-800 span.font-medium");
+
+  $('[data-modal-target="rejected-message-modal"]').on("click", function() {
+      const dataApplicantId = $(this).data("applicantId");
+      const dataStudentNumber = $(this).data("studentNumber");
+      const dataWhyInterested = $(this).data("whyInterested");
+      const dataExperience = $(this).data("experience");
+      const dataRejectMessage = $(this).data("rejectMessage");
+      const dataResubmissionCount = $(this).data("resubmitCount");
+
+      viewClubApplicantID.val(dataApplicantId);
+      viewClubRejectMessage.text(dataRejectMessage);
+      viewStudentNumber.val(dataStudentNumber);
+      viewWhyInterested.val(dataWhyInterested);
+      viewExperience.val(dataExperience || "No Experience Provided");
+
+      // Check if resubmission count is >= 3 and add the permanent rejection message
+    const permanentRejectionMessage = $(
+      '<p class="font-semibold text-sm text-red-700 mb-4">You are permanently rejected.</p>'
+    );
+    const existingPermanentMessage = rejectionReasonSpan.prev(
+      "p.font-semibold.text-sm.text-red-700.mb-2"
+    );
+
+    if (dataResubmissionCount >= 3) {
+      if (existingPermanentMessage.length === 0) {
+        rejectionReasonSpan.before(permanentRejectionMessage);
+      }
+      // You might also want to update the hint text about resubmitting
+      $(".bg-gray-100 p.text-gray-700:last-child").text(
+        'You have reached the maximum number of resubmissions.'
+      );
+    } else {
+      existingPermanentMessage.remove(); // Remove the permanent rejection message if count is less than 3
+      // Restore the default hint text about resubmitting
+      $(".bg-gray-100 p.text-gray-700:last-child").text(
+        'Please update your application with more details and resubmit.'
+      );
+    }
+  });
+
+  // Handle form submission
+  $('#re-apply-form').submit(function(event){
+    event.preventDefault();
+    $(".error-message").remove();
+    
+    const form = $(this); // Get the form element
+    const url = form.attr('action'); // Get the form action URL
+    const type = 'PUT'; // Get the form method (PUT for edit)
+    const data = form.serialize(); // Serialize the form data 
+
+    $.ajax({
+      url: url,
+      type: type,
+      data: data,
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response) {
+        if(response.success){
+          Swal.fire({
+            title: "Success!",
+            text: response.message,
+            icon: "success",
+          }).then(function () {
+            window.location.reload();
+          });
+        } else{
+          errorAlert();
+        }
+      },
+      error: function (xhr) {
+        if (xhr.responseJSON?.errors) {
+          $.each(xhr.responseJSON.errors, function (field, messages) {
+            let inputField = $(`#edit-category-form input[name='${field}'], #edit-category-form textarea[name='${field}']`);
+            if (!inputField.next(".error-message").length) {
+              inputField.after(
+                `<span class="text-danger error-message">${messages[0]}</span>`
+              );
+            }
+          });
+        } else {
+          errorAlert();
+        }
+      },
+    })
+  })
+});
+
+// Student Withdraw Application swal
+$(document).ready(function () {
+  const getClubApplicantID = $("#applicant_id");
+  $('[data-modal-target="withdraw-application-modal"]').on("click", function(){
+    const dataApplicantId = $(this).data("applicantId");
+    getClubApplicantID.val(dataApplicantId);
+  });
+  
+  $(document).on('click', '.btn-withdraw-applicant', function () {
+    const id = getClubApplicantID.val();
+    const withdrawn_reason = $("#withdrawn_reason").val();
+    console.log(id);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to withdraw your application with this reason?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, withdraw!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/student/club/${id}/withdraw`,
+          type: 'PUT',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            withdrawn_reason: withdrawn_reason,
+          },
+          success: function (response) {
+            Swal.fire('Withdraw!', response.message, 'success').then(() => {
+              window.location.href = "/student/club"; 
+            });
+          },
+          error: function (xhr) {
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        });
+      }
+    });
+  });  
+});
 
 
 // Custom
@@ -694,3 +1202,19 @@ $(document).ready(function () {
   });
 });
 
+$(".filter-btn").on("click", function () {
+  const selectedStatus = $(this).data("status");
+  const allSections = $(".status-section");
+
+  // Reset any column span changes
+  allSections.removeClass("md:col-span-2");
+
+  if (selectedStatus === "all") {
+    allSections.removeClass("hidden");
+  } else {
+    allSections.addClass("hidden");
+    const visibleSection = $(`[data-status='${selectedStatus}']`);
+    visibleSection.removeClass("hidden");
+    visibleSection.addClass("md:col-span-2");
+  }
+});

@@ -7,35 +7,45 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="p-6 bg-white border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Your Clubs') }}</h3>
-            <p class="text-gray-500 text-sm mb-2">{{ __('Quick access to the clubs you\'ve joined.') }}</p>
+          <div class="p-6 bg-white">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Your Current Clubs') }}</h3>
             <ul class="space-y-3">
-              <li class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <svg class="w-5 h-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 4.354l-2 2m0 0l-2-2m2 2L12 11.646M16 12a4 4 0 01-8 0 4 4 0 018 0z"></path>
-                  </svg>
-                  <span class="text-gray-600">{{ __('Computer Science Society') }}</span>
+              @forelse ($hasApplied as $application)
+              <li class="bg-white rounded-md shadow-sm p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="flex-shrink-0">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 14M5 18h12a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h5 class="text-md font-semibold text-gray-600">{{ $application->club->club_name }}</h5>
                 </div>
-                <a href="#" class="text-indigo-500 hover:underline text-sm">{{ __('Visit') }}</a>
-              </li>
-              <li class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2h-3l-4-4z">
-                    </path>
-                  </svg>
-                  <span class="text-gray-600">{{ __('Debate and Public Speaking Club') }}</span>
+                <div>
+                  @if ($application->status == 'rejected')
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    {{ __('Rejected') }}
+                  </span>
+                  @elseif ($application->status == 'pending')
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    {{ __('Pending') }}
+                  </span>
+                  @elseif ($application->status == 'withdrawn')
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-500">
+                    {{ __('Withdrawn') }}
+                  </span>
+                  @else
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {{ __('Accepted') }}
+                  </span>
+                  @endif
                 </div>
-                <a href="#" class="text-indigo-500 hover:underline text-sm">{{ __('Visit') }}</a>
               </li>
+              @empty
+              <p class="text-gray-500">{{ __('You haven\'t applied to any clubs yet.') }}</p>
+              @endforelse
             </ul>
-            <a href="#" class="block mt-4 text-indigo-500 hover:underline text-sm">{{ __('See All Your Clubs') }}</a>
           </div>
         </div>
 

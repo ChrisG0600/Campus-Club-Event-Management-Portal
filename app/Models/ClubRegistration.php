@@ -31,5 +31,11 @@ class ClubRegistration extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function clubMembers()
+    {
+        return $this->hasMany(ClubMember::class, 'club_id');
+    }
+
     
 }

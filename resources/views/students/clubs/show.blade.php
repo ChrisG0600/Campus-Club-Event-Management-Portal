@@ -52,9 +52,16 @@
 
           <div class="mb-6 flex items-center justify-start gap-3">
             <button type="button" data-modal-target="join-club-modal" data-modal-toggle="join-club-modal"
-              class="inline-flex items-center px-4 py-2 bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+              class="{{ $hasApplied ? 'hidden' : 'inline-flex'}} items-center px-4 py-2 bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150"
+              >
               {{ __('Join This Club!') }}
             </button>
+            <span class="inline-flex items-center rounded-md font-semibold text-xs uppercase tracking-widest {{ $hasApplied ? 'text-gray-500' : 'hidden'}}">
+              <svg class="w-4 h-4 mr-1 text-gray-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              {{ __('Pending Application') }}
+            </span>
           </div>
         </div>
       </div>
@@ -79,13 +86,32 @@
             <span class="sr-only">{{ __('Close modal') }}</span>
           </button>
         </div>
-        <form action="" method="POST" class="p-6" id="join-club-form">
+        <form action="{{ route('student.club.apply') }}" method="POST" class="p-6" id="join-club-form">
           @csrf
+          <input type="hidden" name="club_id" value="{{ $club->id }}">
           <div class="mb-4">
-            <label for="student_id" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Student ID: ') }}</label>
-            <input type="text" name="student_id" id="student_id"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+            <label for="student_number" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Student Number') }}</label>
+            <input type="text" name="student_number" id="student_number"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              required>
           </div>
+
+          <div class="mb-4">
+            <label for="why_interested" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Why are you interested in
+              joining?') }}</label>
+            <textarea name="why_interested" id="why_interested" rows="4"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="Explain your motivation or what interests you about this club" required></textarea>
+          </div>
+
+          <div class="mb-4">
+            <label for="experience" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Relevant Experience (Optional)')
+              }}</label>
+            <textarea name="experience" id="experience" rows="4"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="Mention any experience related to the club's activities (if any)"></textarea>
+          </div>
+
           <button type="submit"
             class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">
             {{ __('Apply') }}
@@ -94,10 +120,4 @@
       </div>
     </div>
   </div>
-
-
-
-
-
-
 </x-app-layout>
