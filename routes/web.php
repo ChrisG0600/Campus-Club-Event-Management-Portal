@@ -46,7 +46,7 @@ Route::middleware(['auth', 'role:club_admin'])->group(function () {
     Route::post('/club/manage/announcement/create', [ClubAnnouncementController::class, 'store'])->name('club_admin.announcement.store');
     Route::get('/club/manage/announcement/edit/{id}', [ClubAnnouncementController::class, 'edit'])->name('club_admin.announcement.edit');
     Route::put('/club/manage/announcement/update/{id}', [ClubAnnouncementController::class, 'update'])->name('club_admin.announcement.update');
-    Route::delete('/club/manage/announcement/delete/{id}', [ClubAnnouncementController::class, 'destroy'])->name('club_admin.announcement.destroy');
+    Route::delete('/club/manage/announcement/delete/{id}', [ClubAnnouncementController::class, 'destroy'])->name('club_admin.announcement.destroy'); // Possible to delete
 
 
     Route::get('/club/applicants', [ClubApplicationController::class, 'showApplicant'])->name('club_admin.showApplicant');
@@ -77,6 +77,8 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::get('/club/registration-requests', [SuperAdminController::class, 'showClubRegistrationClubs'])->name('super_admin.showClubRegistrationRequests');
     Route::put('/club/registration-requests/{id}', [SuperAdminController::class, 'approveClubRegistration'])->name('super_admin.approveClubRegistration');
     Route::get('/club/pending-announcement', [SuperAdminController::class, 'showPendingAnnouncement'])->name('super_admin.showPendingAnnouncement');
+    Route::put('/club/pending-announcement/reject/{id}', [SuperAdminController::class, 'rejectAnnouncement'])->name('super_admin.rejectAnnouncement');
+    Route::put('/club/pending-announcement/approve/{id}', [SuperAdminController::class, 'publishAnnouncement'])->name('super_admin.publishAnnouncement');
 
     // CRUD for categories
     Route::get('/club/categories', [CategoryController::class, 'index'])->name('super_admin.categories.index');

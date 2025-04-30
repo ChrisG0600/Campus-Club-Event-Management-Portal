@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ClubAnnouncement;
 use App\Models\ClubRegistration;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -38,11 +39,11 @@ class SuperAdminController extends Controller
 
         if ($studentsId->save()) {
             // Log success
-            Log::info('Student updated successfully:', ['id' => $studentsId->id, 'new_role' => $studentsId->role]);
+            //Log::info('Student updated successfully:', ['id' => $studentsId->id, 'new_role' => $studentsId->role]);
             return response()->json(['success' => 'Student updated successfully!', 'student' => $studentsId->fresh()]);
         } else {
             // Log failure
-            Log::error('Failed to update student:', ['id' => $studentsId->id, 'requested_role' => $request->input('role')]);
+            //Log::error('Failed to update student:', ['id' => $studentsId->id, 'requested_role' => $request->input('role')]);
             return response()->json(['error' => 'Failed to update student. Check logs for details.']);
         }
     }
@@ -103,9 +104,10 @@ class SuperAdminController extends Controller
     {
         $pendingClubsCount = ClubRegistration::where('is_pending', true)->count();
         $registeredClub = ClubRegistration::where('is_pending', false)->count();
+        $pendingAnnouncment = ClubAnnouncement::where('status', 'pending')->count();
 
         $categoryCount = Category::all()->count();
-        return view('admin.club.show', compact('pendingClubsCount', 'registeredClub', 'categoryCount'));
+        return view('admin.club.show', compact('pendingClubsCount', 'registeredClub', 'categoryCount', 'pendingAnnouncment'));
     }
 
     public function showClubDeletionRequests()
@@ -134,6 +136,40 @@ class SuperAdminController extends Controller
 
     public function showPendingAnnouncement()
     {
-        return view('admin.club.announcement.showAnnouncement');
+        $pendingAnnouncements = ClubAnnouncement::where('status', 'pending')->with('club', 'creator')->get();
+        return view('admin.club.announcement.showAnnouncement', compact('pendingAnnouncements'));
+    }
+
+    public function rejectAnnouncement(Request $request, $id)
+    {
+        try {
+            
+            $validatedData = $request->validate([
+                'rejection_reason' => ['required', 'string', 'max:200'],
+            ]);
+            
+            $announcement = ClubAnnouncement::findOrFail($id);
+            $announcement->status = 'rejected';
+            $announcement->rejection_reason = $validatedData['rejection_reason'];
+            $announcement->save();
+
+
+        return response()->json(['success' => true, 'message' => 'Announcement has been rejected successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error on rejecting this announcement.']);
+        }
+    }
+
+    public function publishAnnouncement($id)
+    {
+        try {
+            $announcement = ClubAnnouncement::findOrFail($id);
+            $announcement->status = 'published';
+            $announcement->save();
+
+            return response()->json(['success' => true, 'message' => 'Announcement has been approved and published.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error on approving this announcement. Pleas try again later.']);
+        }
     }
 }

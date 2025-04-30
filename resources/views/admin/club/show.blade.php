@@ -119,7 +119,7 @@
                 <h3 class="text-lg font-medium text-gray-900">{{ __('Pending Announcements') }}</h3>
                 <span
                   class="inline-flex items-center justify-center rounded-full bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1">
-                  5 {{ __('Pending') }}
+                  {{ $pendingAnnouncment . __(' Pending') }}
                 </span>
               </div>
               <p class="mt-1 text-sm text-gray-500">{{ __('Review and approve or reject announcements from clubs.') }}

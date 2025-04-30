@@ -72,34 +72,169 @@
               class="inline-flex items-center px-4 py-2 bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
               {{ __('Create New Announcement') }}
             </a>
-            <p class="text-gray-500 text-xs mt-1">{{ __('New announcements may require faculty approval before being
-              posted.') }}</p>
+            <p class="text-gray-500 text-xs mt-1">{{ __('New announcements may require faculty approval before being posted.') }}</p>
           </div>
 
           <ul class="space-y-4">
             @forelse ( $announcements as $announcement)
               <li class="border rounded-md p-4 hover:shadow-md transition duration-200">
                 <h5 class="font-semibold text-gray-700">{{ $announcement->title }}</h5>
-                <p class="text-gray-500 text-sm">{{ __('Status:') }} <span class="text-green-500">{{ __('Approved') }}</span></p>
+                <p class="text-gray-500 text-sm">{{ __('Status:') }} 
+                  @if ($announcement->status == 'pending')
+                    <span class="text-yellow-500">{{ __('Pending') }}</span>
+                  @elseif($announcement->status == 'published')
+                    <span class="text-green-500">{{ __('Published') }}</span>
+                  @else
+                    <span class="text-red-500">{{ __('Rejected') }}</span>
+                  @endif
+                </p>
                 <p class="text-gray-600 text-sm mt-1">{{ $announcement->content }}</p>
                 <div class="mt-2">
                   <a href="{{ route('club_admin.announcement.edit', $announcement->id) }}"
-                    class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                    __('Edit') }}
+                    class="{{$announcement->status == 'published' || $announcement->status == 'rejected' ? 'hidden' : '' }} inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
+                      {{ __('Edit') }}
                   </a>
-                  <form method="POST" action="{{ route('club_admin.announcement.destroy', ['id' => $announcement->id]) }}"  data-redirect-url="{{ route('club_admin.manage') }}" class="inline" >
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" data-name="{{ $announcement->title }}" class="delete-btn ml-2 inline-flex items-center px-3 py-1.5 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">{{
-                      __('Delete') }}
+                  @if ($announcement->status == 'published')
+                    <button data-modal-target="view-announcement-modal" data-modal-toggle="view-announcement-modal"
+                      data-id="{{ $announcement->id }}" data-title="{{ $announcement->title }}" data-content="{{ $announcement->content }}"
+                      data-created-by="{{ $announcement->creator->name }}" data-club-name="{{ $announcement->club->club_name }}"
+                      data-submitted-on="{{ $announcement->created_at->format('M d, Y') }}" 
+                      class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md font-semibold text-xs
+                      text-white uppercase tracking-widest focus:outline-none focus:ring
+                      disabled:opacity-25 transition ease-in-out duration-150 bg-green-500 hover:bg-green-700 focus:ring-green-300">
+                      {{  __('View') }}
                     </button>
-                  </form>
+                  @elseif ($announcement->status == 'rejected')
+                    <button data-modal-target="view-announcement-rejected" data-modal-toggle="view-announcement-rejected"
+                      data-id="{{ $announcement->id }}" data-title="{{ $announcement->title }}" data-content="{{ $announcement->content }}"
+                      data-created-by="{{ $announcement->creator->name }}" data-club-name="{{ $announcement->club->club_name }}"
+                      data-submitted-on="{{ $announcement->created_at->format('M d, Y') }}" data-rejection-reason="{{ $announcement->rejection_reason }}"
+                      class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring
+                        disabled:opacity-25 transition ease-in-out duration-150 bg-red-500 hover:bg-red-700 focus:ring-red-300">
+                      {{ __('View Message') }}
+                    </button>
+                  @endif
                 </div>
               </li>
             @empty
-              <h5>No Announcment</h5>
+              <h5 class="text-gray-500 text-sm text-center">{{ __('No Announcements Available') }}</h5>
             @endforelse
           </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-announcement-modal" tabindex="-1" aria-hidden="true" data-modal-backdrop="static"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-md max-h-full">
+      <div class="relative bg-white rounded-lg shadow">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 rounded-t">
+          <h3 class="text-xl font-semibold text-gray-900">
+            {{ __('Announcement Details') }}
+          </h3>
+          <button type="button"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+            data-modal-hide="view-announcement-modal">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+            <span class="sr-only">{{ __('Close modal') }}</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-1">
+          <input type="hidden" name="announcement-id" id="announcement-id" value="">
+          <div>
+            <label for="announcement-title" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Title') }}</label>
+            <input type="text" id="announcement-title"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
+          <div>
+            <label for="announcement-content" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Content') }}</label>
+            <textarea id="announcement-content" rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+              readonly></textarea>
+          </div>
+          <div>
+            <label for="announcement-created-by" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Club Admin') }}</label>
+            <input type="text" id="announcement-created-by"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
+          <div>
+            <label for="announcement-club-name" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Club Name') }}</label>
+            <input type="text" id="announcement-club-name"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
+          <div>
+            <label for="announcement-submitted-on" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Submitted On')}}</label>
+            <input type="text" id="announcement-submitted-on"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-announcement-rejected" tabindex="-1" aria-hidden="true" data-modal-backdrop="static"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-md max-h-full">
+      <div class="relative bg-white rounded-lg shadow">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 rounded-t">
+          <h3 class="text-xl font-semibold text-gray-900">
+            {{ __('Rejected Announcement Details') }}
+          </h3>
+          <button type="button"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+            data-modal-hide="view-announcement-rejected">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+            <span class="sr-only">{{ __('Close modal') }}</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-1">
+          <input type="hidden" name="rejected-announcement-id" id="rejected-announcement-id" value="">
+          <div>
+            <label for="rejected-announcement" class="block mb-2 text-sm font-medium text-red-700">{{ __('Reason') }}</label>
+            <span type="text" id="rejected-announcement" class="bg-red-50 border border-red-300 text-red-900 text-sm rounded-lg  block w-full p-2.5"></span>
+          </div>
+
+          <div>
+            <label for="rejected-announcement-title" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Title') }}</label>
+            <input type="text" id="rejected-announcement-title"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
+          <div>
+            <label for="rejected-announcement-content" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Content') }}</label>
+            <textarea id="rejected-announcement-content" rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+              readonly></textarea>
+          </div>
+          <div>
+            <label for="rejected-announcement-created-by" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Club Admin') }}</label>
+            <input type="text" id="rejected-announcement-created-by"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
+          <div>
+            <label for="rejected-announcement-club-name" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Club Name') }}</label>
+            <input type="text" id="rejected-announcement-club-name"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
+          <div>
+            <label for="rejected-announcement-submitted-on" class="block mb-2 text-sm font-medium text-gray-700">{{ __('Submitted On')}}</label>
+            <input type="text" id="rejected-announcement-submitted-on"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+              readonly>
+          </div>
         </div>
       </div>
     </div>

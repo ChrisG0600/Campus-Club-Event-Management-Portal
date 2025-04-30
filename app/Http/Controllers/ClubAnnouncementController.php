@@ -39,7 +39,7 @@ class ClubAnnouncementController extends Controller
             $validator = Validator::make($request->all(), [
                 'club_id' => 'required|exists:club_registrations,id',
                 'title' => 'required|string|max:255|regex:/^[a-zA-Z ]+$/',
-                'content' => 'required|string|max:1000|regex:/^[a-zA-Z ]+$/',
+                'content' => 'required|string|max:1000',
                 'announcement_date' => 'required|date_format:Y-m-d',
                 'time' => 'nullable|date_format:H:i',
                 'place' => 'nullable|string|max:255',
@@ -52,7 +52,7 @@ class ClubAnnouncementController extends Controller
             $announcement = new ClubAnnouncement($validatedData);
             $announcement->created_by = auth()->id();
             $announcement->save();
-            return response()->json(['success' => true, 'message' => 'Announcement created successfully.'], 200);
+            return response()->json(['success' => true, 'message' => 'Announcement created successfully and is now on review.'], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while creating the announcement.'], 500);
         }

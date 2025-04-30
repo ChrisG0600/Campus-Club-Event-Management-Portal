@@ -254,6 +254,131 @@ $(document).on('click', '.btn-approve-club', function () {
   });
 });
 
+// View Pending Announcement
+$(document).ready(function (){
+  const announcementId = $('#announcement-id');
+  const announcementTitle = $('#announcement-title');
+  const announcementContent = $('#announcement-content');
+  const announcementCreatedBy = $('#announcement-created-by');
+  const announcementClubName = $('#announcement-club-name');
+  const announcementSubmittedAt = $('#announcement-submitted-on');
+
+  $('[data-modal-target="view-announcement-modal"]').on("click", function () {
+    const id = $(this).data("id");
+    const title = $(this).data("title");
+    const content = $(this).data("content");
+    const createdBy = $(this).data("createdBy");
+    const clubName = $(this).data("clubName");
+    const submittedOn = $(this).data("submittedOn");
+
+    announcementId.val(id);
+    announcementTitle.val(title);
+    announcementContent.val(content);
+    announcementCreatedBy.val(createdBy);
+    announcementClubName.val(clubName);
+    announcementSubmittedAt.val(submittedOn);
+
+  });
+});
+
+// View Rejected Announcement
+$(document).ready(function (){
+  const announcementId = $('#rejected-announcement-id');
+  const announcementTitle = $('#rejected-announcement-title');
+  const announcementContent = $('#rejected-announcement-content');
+  const announcementCreatedBy = $('#rejected-announcement-created-by');
+  const announcementClubName = $('#rejected-announcement-club-name');
+  const announcementSubmittedAt = $('#rejected-announcement-submitted-on');
+  const announcementRejection = $('#rejected-announcement')
+  
+  $('[data-modal-target="view-announcement-rejected"]').on("click", function () {
+    const rejectedId = $(this).data("id");
+    const rejectedTitle = $(this).data("title");
+    const rejectedContent = $(this).data("content");
+    const rejectedCreatedBy = $(this).data("createdBy");
+    const rejectedClubName = $(this).data("clubName");
+    const rejectedSubmittedOn = $(this).data("submittedOn");
+    const rejection = $(this).data('rejectionReason');
+
+    announcementId.val(rejectedId);
+    announcementTitle.val(rejectedTitle);
+    announcementContent.val(rejectedContent);
+    announcementCreatedBy.val(rejectedCreatedBy);
+    announcementClubName.val(rejectedClubName);
+    announcementSubmittedAt.val(rejectedSubmittedOn);
+    announcementRejection.text(rejection);
+  });
+});
+
+// Approve Announcement
+$(document).on("click", ".btn-announcement-approve", function(){
+  const id = $(this).data('id');
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You want to approve this announcement?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, approve it!'
+  }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/club/pending-announcement/approve/${id}`,
+          type: 'PUT',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+          },
+          success: function (response) {
+            Swal.fire('Published!', response.message, 'success').then(()=> window.location.reload());
+          },
+          error: function (xhr) {
+            Swal.fire('Error!', 'Something went wrong.', 'error');
+          }
+        });
+      }
+  });
+});
+
+// Reject Pending Announcement
+$(document).ready(function(){
+  const getAnnouncementID = $("#announcement-id");
+  $('[data-modal-target="reject-announcement-modal"]').on("click", function(){
+    const announcementID = $(this).data("id");
+    getAnnouncementID.val(announcementID);
+  });
+  $(document).on("click", ".btn-reject-announcement", function () {
+    const id = getAnnouncementID.val();
+    console.log(id);
+    const rejection_reason = $('#rejection_reason').val();
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to reject this announcement?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, reject it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/club/pending-announcement/reject/${id}`,
+          type: "PUT",
+          data: {
+            rejection_reason: rejection_reason,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+          },
+          success: function (response) {
+            Swal.fire("Rejected!", response.message, "success").then(
+              () => {
+                window.location.href = "/club/pending-announcement";
+              }
+            );
+          },
+          error: function (xhr) {
+            Swal.fire("Error!", "Something went wrong.", "error");
+          },
+        });
+      }
+    });
+  });
+});
 // Implement reject pending club with message via modal
 
 // Edit Functionality for Admin->Students
@@ -1202,6 +1327,7 @@ $(document).ready(function () {
   });
 });
 
+// Filter button by section
 $(".filter-btn").on("click", function () {
   const selectedStatus = $(this).data("status");
   const allSections = $(".status-section");

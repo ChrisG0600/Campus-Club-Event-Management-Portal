@@ -16,6 +16,9 @@ class ClubAnnouncement extends Model
         'announcement_date',
         'time',
         'place',
+        'status',
+        'rejection_reason',
+
     ];
 
     public function creator(): BelongsTo
