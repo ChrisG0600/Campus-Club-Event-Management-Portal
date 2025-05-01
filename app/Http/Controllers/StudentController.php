@@ -23,7 +23,7 @@ class StudentController extends Controller
     // Announcement for students
     public function showAnnouncement()
     {
-        $clubAnnouncements = ClubAnnouncement::with('club')->orderBy('created_at', 'asc')->paginate(5);
+        $clubAnnouncements = ClubAnnouncement::with('club')->where('status', 'published')->orderBy('created_at', 'asc')->paginate(5);
         return view('students.announcement', compact('clubAnnouncements'));
     }
 

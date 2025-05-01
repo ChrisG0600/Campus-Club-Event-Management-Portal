@@ -21,7 +21,7 @@
               {{ __('View Students') }}
             </a>
             <div class="mt-4">
-              <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Total:') }}</span> 150</p>
+              <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Total:') }}</span> {{ $studentsCount }}</p>
               <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Active:') }}</span> 135</p>
               <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Inactive:') }}</span> 15</p>
             </div>
@@ -43,7 +43,7 @@
               {{ __('View Clubs') }}
             </a>
             <div class="mt-4">
-              <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Total:') }}</span> 30</p>
+              <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Total:') }}</span> {{ $clubsTotal}}</p>
               <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Active:') }}</span> 28</p>
               <p class="text-sm text-gray-600"><span class="font-medium">{{ __('Inactive:') }}</span> 2</p>
             </div>

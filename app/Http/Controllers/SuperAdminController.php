@@ -15,7 +15,9 @@ class SuperAdminController extends Controller
     //
     public function index()
     {
-        return view('admin.index');
+        $studentsCount = User::whereIn('role', ['student', 'club_admin'])->count();
+        $clubsTotal = ClubRegistration::where('is_pending', false)->count();
+        return view('admin.index', compact('studentsCount', 'clubsTotal'));
     }
 
     // Show admin->students

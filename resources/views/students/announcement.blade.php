@@ -28,12 +28,14 @@
             @empty
             <li class="py-2 border-b border-gray-200">
               <div class="flex justify-between items-start">
-                <h5>No Club Announcements</h5>
+                <h5 class="text-md text-graly-600 px-3">
+                  {{ __('No Announcement has been made')}}
+                </h5>
               </div>
             </li>              
             @endforelse            
           </ul>
-          <div id="pagination-links" class="mt-2 p-6">
+          <div id="pagination-links" class="mt-1 p-3">
             {{ $clubAnnouncements->links('pagination::tailwind') }}
           </div>
         </div>
