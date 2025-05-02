@@ -104,7 +104,7 @@
 
             <div>
               <label class="block text-gray-700 text-sm font-bold mb-2">Current Logo</label>
-              <img src="{{ asset('images/club_logos/' . $clubs->club_logo) }}" alt="Club Logo" class="rounded-full h-24 w-24 object-cover border border-gray-300">
+              <img src="{{ $clubs->club_logo ? asset('images/club_logos/' . $clubs->club_logo) : asset('Images/club_logos/NoImage/NoLogo.jpg') }}" alt="Club Logo" class="rounded-full h-24 w-24 object-cover border border-gray-300">
             </div>
             
             <!-- Form Actions -->
